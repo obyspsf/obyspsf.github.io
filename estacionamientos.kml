@@ -4,7 +4,25 @@
     <name>UTM Geo Map</name>
     <open>1</open>
     <description>Exported data from UTM Geo Map APP</description>
-    <Style id="4">
+    <Style id="5">
+      <LineStyle>
+        <width>2</width>
+        <color>ffff0000</color>
+      </LineStyle>
+      <PolyStyle>
+        <color>800000ff</color>
+      </PolyStyle>
+    </Style>
+    <Style id="6">
+      <LineStyle>
+        <width>2</width>
+        <color>ffff0000</color>
+      </LineStyle>
+      <PolyStyle>
+        <color>800000ff</color>
+      </PolyStyle>
+    </Style>
+    <Style id="8">
       <LineStyle>
         <width>2</width>
         <color>ffff0000</color>
@@ -18,20 +36,60 @@
       <visibility>1</visibility>
       <description>Polygon features</description>
       <Placemark>
-        <name>1</name>
+        <name>2</name>
         <visibility>1</visibility>
-        <description>Area: 78,961.8 m², no description</description>
-        <styleUrl>#4</styleUrl>
+        <description>Area: 678.281 m², no description</description>
+        <styleUrl>#5</styleUrl>
         <Polygon>
           <extrude>1</extrude>
           <altitudeMode>relativeToGround</altitudeMode>
           <outerBoundaryIs>
             <LinearRing>
-              <coordinates>-114.83888760209084,31.024573169556636,0.0 
--114.83630765229462,31.02651021846894,0.0 
--114.83436372131108,31.02467947554662,0.0 
--114.83491122722627,31.023248357119623,0.0 
--114.83888760209084,31.024573169556636,0.0 
+              <coordinates>-114.83327843248843,31.02276278906672,0.0 
+-114.83318153768776,31.023032294007606,0.0 
+-114.83295757323503,31.022973106420675,0.0 
+-114.8330742493272,31.02270360131234,0.0 
+-114.83327843248843,31.02276278906672,0.0 
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>1</name>
+        <visibility>1</visibility>
+        <description>Area: 169.913 m², no description</description>
+        <styleUrl>#6</styleUrl>
+        <Polygon>
+          <extrude>1</extrude>
+          <altitudeMode>relativeToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>-114.83303502202035,31.0231262470434,0.0 
+-114.83307994902133,31.023006148039283,0.0 
+-114.83295723795892,31.022970520554406,0.0 
+-114.83291734009981,31.023092918148343,0.0 
+-114.83303502202035,31.0231262470434,0.0 
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>3</name>
+        <visibility>1</visibility>
+        <description>Area: 48.971 m², no description</description>
+        <styleUrl>#8</styleUrl>
+        <Polygon>
+          <extrude>1</extrude>
+          <altitudeMode>relativeToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>-114.8348719999194,31.020400134757185,0.0 
+-114.83484182506798,31.020474552222147,0.0 
+-114.8347868397832,31.02045731266016,0.0 
+-114.83481667935848,31.020382895181708,0.0 
+-114.8348719999194,31.020400134757185,0.0 
 </coordinates>
             </LinearRing>
           </outerBoundaryIs>
