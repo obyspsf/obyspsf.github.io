@@ -30,7 +30,7 @@
  L.control.layers({'Satélite':satellite,'Calles':streets},overlays,{collapsed:false,position:'topright'}).addTo(map);
  function esc(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
  // Direct-download endpoint for the shared Drive file. Browser CORS restrictions may prevent direct access.
- const KML_URL='https://drive.google.com/uc?export=download&id=10gqw4c_rSt7hicmNSVOmTOzCj00xPhBq';
+ const KML_URL='https://drive.google.com/file/d/10gqw4c_rSt7hicmNSVOmTOzCj00xPhBq/view?usp=drive_link';
  async function loadKml(){
    say('Cargando estacionamientos.kml desde Google Drive…');
    try{
