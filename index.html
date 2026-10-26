@@ -206,43 +206,56 @@
     const map = L.map('map');
 
     // ==========================================
-    // MAPAS BASE
-    // ==========================================
+// MAPAS BASE DE MEJOR DETALLE
+// ==========================================
 
-    // Satélite
-    const mapaSatelital = L.tileLayer(
-        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-        {
-            attribution: 'Tiles &copy; Esri'
-        }
-    );
+// Imágenes satelitales
+const mapaSatelital = L.tileLayer(
+    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    {
+        attribution: 'Tiles &copy; Esri',
+        maxZoom: 22,
+        maxNativeZoom: 19
+    }
+);
 
-    // Calles
-    const mapaCalles = L.tileLayer(
-        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-        {
-            attribution: '&copy; OpenStreetMap'
-        }
-    );
+// Nombres de calles y lugares sobre el satélite
+const etiquetas = L.tileLayer(
+    'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+    {
+        attribution: 'Etiquetas &copy; Esri',
+        maxZoom: 22,
+        maxNativeZoom: 19,
+        pane: 'overlayPane'
+    }
+);
 
-    // Iniciar en satélite
-    mapaSatelital.addTo(map);
+// Mapa de calles alternativo
+const mapaCalles = L.tileLayer(
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {
+        attribution: '&copy; OpenStreetMap',
+        maxZoom: 19
+    }
+);
 
-    // Posición inicial aproximada
-    map.setView([30.99, -114.84], 15);
+// Iniciar en modo híbrido
+mapaSatelital.addTo(map);
+etiquetas.addTo(map);
 
-    // Control de mapas
-    L.control.layers(
-        {
-            'Satélite': mapaSatelital,
-            'Mapa de calles': mapaCalles
-        },
-        {},
-        {
-            collapsed: true
-        }
-    ).addTo(map);
-
+// Selector de mapas
+L.control.layers(
+    {
+        'Satélite': mapaSatelital,
+        'Híbrido (satélite + etiquetas)': L.layerGroup([
+            mapaSatelital,
+            etiquetas
+        ]),
+        'Calles': mapaCalles
+    },
+    {},
+    { collapsed: true }
+).addTo(map);
     // ==========================================
     // MENSAJES
     // ==========================================
