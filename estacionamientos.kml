@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>UTM Geo Map</name>
+    <open>1</open>
+    <description>Exported data from UTM Geo Map APP</description>
+    <Style id="4">
+      <LineStyle>
+        <width>2</width>
+        <color>ffff0000</color>
+      </LineStyle>
+      <PolyStyle>
+        <color>800000ff</color>
+      </PolyStyle>
+    </Style>
+    <Folder>
+      <name>Polygon</name>
+      <visibility>1</visibility>
+      <description>Polygon features</description>
+      <Placemark>
+        <name>1</name>
+        <visibility>1</visibility>
+        <description>Area: 78,961.8 m², no description</description>
+        <styleUrl>#4</styleUrl>
+        <Polygon>
+          <extrude>1</extrude>
+          <altitudeMode>relativeToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>-114.83888760209084,31.024573169556636,0.0 
+-114.83630765229462,31.02651021846894,0.0 
+-114.83436372131108,31.02467947554662,0.0 
+-114.83491122722627,31.023248357119623,0.0 
+-114.83888760209084,31.024573169556636,0.0 
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+    </Folder>
+  </Document>
+</kml>
