@@ -31,6 +31,78 @@
         <color>800000ff</color>
       </PolyStyle>
     </Style>
+    <Style id="9">
+      <LineStyle>
+        <width>2</width>
+        <color>ffff0000</color>
+      </LineStyle>
+      <PolyStyle>
+        <color>800000ff</color>
+      </PolyStyle>
+    </Style>
+    <Style id="10">
+      <LineStyle>
+        <width>2</width>
+        <color>ffff0000</color>
+      </LineStyle>
+      <PolyStyle>
+        <color>800000ff</color>
+      </PolyStyle>
+    </Style>
+    <Style id="11">
+      <LineStyle>
+        <width>2</width>
+        <color>ffff0000</color>
+      </LineStyle>
+      <PolyStyle>
+        <color>800000ff</color>
+      </PolyStyle>
+    </Style>
+    <Style id="12">
+      <LineStyle>
+        <width>2</width>
+        <color>ffff0000</color>
+      </LineStyle>
+      <PolyStyle>
+        <color>800000ff</color>
+      </PolyStyle>
+    </Style>
+    <Style id="13">
+      <LineStyle>
+        <width>2</width>
+        <color>ffff0000</color>
+      </LineStyle>
+      <PolyStyle>
+        <color>800000ff</color>
+      </PolyStyle>
+    </Style>
+    <Style id="14">
+      <LineStyle>
+        <width>2</width>
+        <color>ffff0000</color>
+      </LineStyle>
+      <PolyStyle>
+        <color>800000ff</color>
+      </PolyStyle>
+    </Style>
+    <Style id="16">
+      <LineStyle>
+        <width>2</width>
+        <color>ffff0000</color>
+      </LineStyle>
+      <PolyStyle>
+        <color>800000ff</color>
+      </PolyStyle>
+    </Style>
+    <Style id="17">
+      <LineStyle>
+        <width>2</width>
+        <color>ffff0000</color>
+      </LineStyle>
+      <PolyStyle>
+        <color>800000ff</color>
+      </PolyStyle>
+    </Style>
     <Folder>
       <name>Polygon</name>
       <visibility>1</visibility>
@@ -90,6 +162,166 @@
 -114.8347868397832,31.02045731266016,0.0 
 -114.83481667935848,31.020382895181708,0.0 
 -114.8348719999194,31.020400134757185,0.0 
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>4</name>
+        <visibility>1</visibility>
+        <description>Area: 91.972 m², no description</description>
+        <styleUrl>#9</styleUrl>
+        <Polygon>
+          <extrude>1</extrude>
+          <altitudeMode>relativeToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>-114.83283050358295,31.02466913226631,0.0 
+-114.83288113027811,31.024682348679825,0.0 
+-114.83293812721966,31.024520303830947,0.0 
+-114.83289018273354,31.024508523964162,0.0 
+-114.83283050358295,31.02466913226631,0.0 
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>5</name>
+        <visibility>1</visibility>
+        <description>Area: 74.56 m², no description</description>
+        <styleUrl>#10</styleUrl>
+        <Polygon>
+          <extrude>1</extrude>
+          <altitudeMode>relativeToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>-114.84411489218473,31.0223007788229,0.0 
+-114.84403643757105,31.02228037906521,0.0 
+-114.84400726854803,31.02236169074943,0.0 
+-114.84408371150494,31.022384389051723,0.0 
+-114.84411489218473,31.0223007788229,0.0 
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>6</name>
+        <visibility>1</visibility>
+        <description>Area: 236.622 m², no description</description>
+        <styleUrl>#11</styleUrl>
+        <Polygon>
+          <extrude>1</extrude>
+          <altitudeMode>relativeToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>-114.8332130536437,31.022208261576967,0.0 
+-114.83332302421333,31.02223871757466,0.0 
+-114.83325429260731,31.022428636359617,0.0 
+-114.83315035700797,31.02239904238323,0.0 
+-114.8332130536437,31.022208261576967,0.0 
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>7</name>
+        <visibility>1</visibility>
+        <description>Area: 36.36 m², no description</description>
+        <styleUrl>#12</styleUrl>
+        <Polygon>
+          <extrude>1</extrude>
+          <altitudeMode>relativeToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>-114.83945421874523,31.022156543822696,0.0 
+-114.83943544328214,31.02219590678266,0.0 
+-114.83951188623905,31.022222052973344,0.0 
+-114.83952730894089,31.02218125341991,0.0 
+-114.83945421874523,31.022156543822696,0.0 
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>8</name>
+        <visibility>1</visibility>
+        <description>Area: 151.941 m², no description</description>
+        <styleUrl>#13</styleUrl>
+        <Polygon>
+          <extrude>1</extrude>
+          <altitudeMode>relativeToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>-114.83399894088505,31.02247259632699,0.0 
+-114.83393825590612,31.02245190928603,0.0 
+-114.83384773135187,31.022663663923336,0.0 
+-114.83390372246502,31.022685212876315,0.0 
+-114.83399894088505,31.02247259632699,0.0 
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>9</name>
+        <visibility>1</visibility>
+        <description>Area: 96.822 m², no description</description>
+        <styleUrl>#14</styleUrl>
+        <Polygon>
+          <extrude>1</extrude>
+          <altitudeMode>relativeToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>-114.83406331390142,31.022754456812258,0.0 
+-114.83403615653516,31.0228104840265,0.0 
+-114.83388829976319,31.022759341237386,0.0 
+-114.8339080810547,31.02270963501716,0.0 
+-114.83406331390142,31.022754456812258,0.0 
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>52</name>
+        <visibility>1</visibility>
+        <description>Area: 51.888 m², no description</description>
+        <styleUrl>#16</styleUrl>
+        <Polygon>
+          <extrude>1</extrude>
+          <altitudeMode>relativeToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>-114.83250092715026,31.02592870569769,0.0 
+-114.83247879892588,31.025970078265104,0.0 
+-114.83258374035358,31.026006853865514,0.0 
+-114.83260352164505,31.025969503646248,0.0 
+-114.83250092715026,31.02592870569769,0.0 
+</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>10</name>
+        <visibility>1</visibility>
+        <description>Area: 46.584 m², no description</description>
+        <styleUrl>#17</styleUrl>
+        <Polygon>
+          <extrude>1</extrude>
+          <altitudeMode>relativeToGround</altitudeMode>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>-114.83250059187412,31.02592870569769,0.0 
+-114.832547865808,31.025841363551873,0.0 
+-114.83250193297864,31.02582671074984,0.0 
+-114.83246069401504,31.025914340218673,0.0 
+-114.83250059187412,31.02592870569769,0.0 
 </coordinates>
             </LinearRing>
           </outerBoundaryIs>
