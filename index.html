@@ -1,572 +1,721 @@
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="theme-color" content="#174ea6">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa de Estacionamientos</title>
 
-<title>Mapa de negocios</title>
+    <!-- Leaflet -->
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
-<link rel="stylesheet"
- href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
- crossorigin="">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<style>
-*{box-sizing:border-box}
-html,body{
-  height:100%;
-  margin:0;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-  color:#202124
-}
-body{display:flex;flex-direction:column}
-.top{
-  background:#174ea6;
-  color:white;
-  padding:12px 14px;
-  z-index:500;
-  box-shadow:0 2px 8px #0002
-}
-.top h1{font-size:18px;margin:0}
-.top p{font-size:12px;margin:3px 0 0;opacity:.9}
+    <!-- Conversor KML a GeoJSON -->
+    <script src="https://unpkg.com/@tmcw/togeojson@5.8.1/dist/togeojson.umd.js"></script>
 
-#map{
-  flex:1;
-  min-height:0;
-  width:100%;
-  background:#e8eaed
-}
-.actions{
-  display:flex;
-  gap:8px;
-  padding:10px;
-  background:#fff;
-  box-shadow:0 -2px 8px #0001;
-  z-index:500
-}
-.btn{
-  border:0;
-  border-radius:10px;
-  padding:12px 14px;
-  font-size:14px;
-  font-weight:650;
-  cursor:pointer;
-  flex:1;
-  background:#174ea6;
-  color:white
-}
-.btn.secondary{
-  background:#e8f0fe;
-  color:#174ea6
-}
-.status{
-  font-size:12px;
-  line-height:1.5;
-  padding:8px 12px;
-  background:#f8f9fa;
-  border-top:1px solid #dadce0;
-  overflow-wrap:anywhere
-}
-.status.error{background:#fce8e6;color:#a50e0e}
-.status.ok{background:#e6f4ea;color:#137333}
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
 
-.leaflet-control-layers{border-radius:10px!important}
-.leaflet-popup-content{
-  font-size:14px;
-  overflow-wrap:anywhere
-}
-.leaflet-container{
-  font:14px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif
-}
-.sheet-info{
-  margin-top:8px;
-  padding:8px;
-  background:#e8f0fe;
-  border-radius:8px
-}
-.sheet-info small{
-  display:block;
-  color:#5f6368;
-  margin-bottom:3px
-}
-@media(max-width:420px){
-  .btn{padding:11px 8px;font-size:13px}
-}
-</style>
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        .panel {
+            position: absolute;
+            z-index: 1000;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 30px);
+            max-width: 480px;
+            box-sizing: border-box;
+            background: white;
+            padding: 12px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,.25);
+        }
+
+        .panel h3 {
+            margin: 0 0 8px;
+            text-align: center;
+            font-size: 17px;
+        }
+
+        .botones {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+        }
+
+        button {
+            border: none;
+            border-radius: 6px;
+            padding: 10px 12px;
+            background: #145da0;
+            color: white;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0d4375;
+        }
+
+        button:disabled {
+            opacity: .6;
+            cursor: wait;
+        }
+
+        #mensaje {
+            margin-top: 8px;
+            text-align: center;
+            font-size: 12px;
+            color: #444;
+        }
+
+        .info-popup {
+            min-width: 190px;
+            font-family: Arial, sans-serif;
+        }
+
+        .info-popup h3 {
+            margin: 0 0 10px;
+            font-size: 16px;
+            color: #174b78;
+        }
+
+        .info-popup p {
+            margin: 6px 0;
+            font-size: 13px;
+            overflow-wrap: anywhere;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .status-pagado {
+            color: #155724;
+            background: #d4edda;
+        }
+
+        .status-no-pagado {
+            color: #721c24;
+            background: #f8d7da;
+        }
+
+        .status-desconocido {
+            color: #555;
+            background: #e9ecef;
+        }
+
+        .leyenda {
+            margin-top: 8px;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            font-size: 11px;
+            color: #444;
+        }
+
+        .punto {
+            display: inline-block;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            margin-right: 4px;
+        }
+
+        @media (max-width: 480px) {
+            .panel {
+                top: 8px;
+                padding: 9px;
+            }
+
+            button {
+                padding: 9px;
+                font-size: 12px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<header class="top">
-  <h1>Mapa de negocios</h1>
-  <p>Vista satelital · polígonos · ubicación del dispositivo</p>
-</header>
+    <div class="panel">
+        <h3>Mapa de Estacionamientos</h3>
 
-<div id="map" aria-label="Mapa interactivo"></div>
+        <div class="botones">
+            <button id="btnSatelite">Satélite</button>
+            <button id="btnCalles">Calles</button>
+            <button id="btnUbicacion">Mi ubicación</button>
+            <button id="btnRecargar">Recargar datos</button>
+        </div>
 
-<div class="actions">
-  <button class="btn" id="locate" type="button">
-    📍 Mi ubicación
-  </button>
+        <div class="leyenda">
+            <span><i class="punto" style="background:#16a34a"></i>Pagado</span>
+            <span><i class="punto" style="background:#dc2626"></i>No pagado</span>
+            <span><i class="punto" style="background:#2563eb"></i>Sin datos</span>
+        </div>
 
-  <button class="btn secondary" id="reload" type="button">
-    ↻ Recargar KML
-  </button>
-</div>
+        <div id="mensaje">Iniciando mapa...</div>
+    </div>
 
-<div id="status" class="status" role="status" aria-live="polite">
-  Preparando mapa…
-</div>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
- crossorigin=""></script>
-
-<script src="https://unpkg.com/@tmcw/togeojson@5.8.1/dist/togeojson.umd.js"></script>
+    <div id="map"></div>
 
 <script>
-(() => {
-'use strict';
+    // =====================================================
+    // CONFIGURACIÓN
+    // =====================================================
 
-const statusEl = document.getElementById('status');
+    const SHEET_ID =
+        '1LdpC1hhub7cUcSq0EbiLFFKyDwQ68hhl9R4LRNSgqso';
 
-const say = (msg, kind = '') => {
-  statusEl.textContent = msg;
-  statusEl.className = 'status ' + kind;
-};
+    // Nombre exacto de la pestaña de Google Sheets
+    const SHEET_NAME = 'APPCELL';
 
-// Verificar librerías
-if (!window.L || !window.toGeoJSON) {
-  say('Error al cargar las librerías del mapa. Revisa tu conexión.', 'error');
-  return;
-}
+    // Archivo KML publicado junto con index.html
+    const KML_URL = new URL(
+        'estacionamientos.kml',
+        window.location.href
+    ).href;
 
-// ==========================================
-// CONFIGURACIÓN DEL MAPA
-// ==========================================
+    // Estructura de Sheets:
+    // A = ID
+    // B = NOMBRE
+    // C = LOCALIZACIÓN
+    // D = STATUS
+    //
+    // Datos desde A2
 
-const map = L.map('map', {
-  zoomControl: true
-}).setView([31.025, -114.84], 14);
+    let datosContribuyentes = {};
+    let capaKML = null;
+    let marcadorUbicacion = null;
+    let circuloPrecision = null;
+    let ultimaCapaBase = null;
 
-// Mapa satelital Esri
-const satellite = L.tileLayer(
-  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-  {
-    maxZoom: 19,
-    attribution: 'Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community'
-  }
-).addTo(map);
+    const mensaje = document.getElementById('mensaje');
 
-// Mapa de calles
-const streets = L.tileLayer(
-  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-  {
-    maxZoom: 19,
-    attribution: '© OpenStreetMap contributors'
-  }
-);
-
-// ==========================================
-// CONFIGURACIÓN GOOGLE SHEETS
-// ==========================================
-
-const SHEET_ID = '1LdpC1hhub7cUcSq0EbiLFFKyDwQ68hhl9R4LRNSgqso';
-const SHEET_NAME = 'APPCEL';
-const cellCache = {};
-
-// ==========================================
-// CAPA DE POLÍGONOS KML
-// ==========================================
-
-let kmlLayer = L.geoJSON(null, {
-  style: () => ({
-    color: '#ff3b30',
-    weight: 3,
-    opacity: 0.95,
-    fillColor: '#ffcc00',
-    fillOpacity: 0.28
-  }),
-
-  onEachFeature: (feature, layer) => {
-    const p = feature.properties || {};
-
-    const polygonId = String(
-      p.name || p.Name || p.id || ''
-    ).trim();
-
-    const title =
-      p.name || p.Name || 'Polígono de estacionamientos';
-
-    const rows = Object.entries(p)
-      .filter(([k, v]) =>
-        v !== null && v !== '' && typeof v !== 'object'
-      )
-      .map(([k, v]) =>
-        `<div><b>${esc(k)}:</b> ${esc(String(v))}</div>`
-      )
-      .join('');
-
-    let sheetInfo = '';
-
-    if (polygonId === '1') {
-      sheetInfo = `
-        <div class="sheet-info" id="sheet-info-${escId(polygonId)}">
-          <small>Google Sheets · pestaña APPCEL</small>
-          Consultando celda A4…
-        </div>`;
-    } else {
-      sheetInfo = `
-        <div class="sheet-info">
-          <small>Google Sheets · pestaña APPCEL</small>
-          Para este polígono aún no se configuró una celda.
-        </div>`;
+    function mostrarMensaje(texto) {
+        mensaje.textContent = texto;
     }
 
-    layer.bindPopup(`
-      <b>${esc(String(title))}</b>
-      ${rows}
-      ${sheetInfo}
-    `);
+    // =====================================================
+    // MAPA
+    // =====================================================
 
-    // Consulta de Google Sheets para el polígono con ID 1
-    if (polygonId === '1') {
-      layer.on('click', () => {
-        loadSheetCell(
-          'A4',
-          `sheet-info-${escId(polygonId)}`
+    const map = L.map('map', {
+        zoomControl: true
+    }).setView([24.0, -102.0], 5);
+
+    // Mapa satelital
+    const satelite = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        {
+            attribution: 'Tiles &copy; Esri'
+        }
+    );
+
+    // Mapa de calles
+    const calles = L.tileLayer(
+        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        {
+            attribution: '&copy; OpenStreetMap'
+        }
+    );
+
+    satelite.addTo(map);
+    ultimaCapaBase = satelite;
+
+    function cambiarMapa(capa) {
+        if (ultimaCapaBase) {
+            map.removeLayer(ultimaCapaBase);
+        }
+
+        ultimaCapaBase = capa;
+        capa.addTo(map);
+    }
+
+    document.getElementById('btnSatelite').onclick = () => {
+        cambiarMapa(satelite);
+    };
+
+    document.getElementById('btnCalles').onclick = () => {
+        cambiarMapa(calles);
+    };
+
+    // =====================================================
+    // FUNCIONES AUXILIARES
+    // =====================================================
+
+    function escapeHTML(valor) {
+        return String(valor ?? '').replace(/[&<>"']/g, caracter => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        })[caracter]);
+    }
+
+    // Normalizar ID:
+    // 1, "1", " 1 " y 1.0 se relacionan como el mismo ID.
+    // Los IDs alfanuméricos también se aceptan.
+    function normalizarID(valor) {
+        if (valor === null || valor === undefined) {
+            return '';
+        }
+
+        let id = String(valor).trim();
+
+        if (/^\d+\.0+$/.test(id)) {
+            id = id.replace(/\.0+$/, '');
+        }
+
+        return id;
+    }
+
+    // =====================================================
+    // CONSULTAR GOOGLE SHEETS
+    // =====================================================
+
+    async function cargarDatosSheet() {
+        mostrarMensaje('Consultando información de Sheets...');
+
+        const url = new URL(
+            `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq`
         );
-      });
-    }
-  }
-}).addTo(map);
 
-// Selector de capas
-const overlays = {
-  'Polígonos: estacionamientos.kml': kmlLayer
-};
+        url.searchParams.set('sheet', SHEET_NAME);
+        url.searchParams.set('range', 'A2:D');
+        url.searchParams.set('headers', '0');
+        url.searchParams.set('tqx', 'out:json');
 
-L.control.layers(
-  {
-    'Satélite': satellite,
-    'Calles': streets
-  },
-  overlays,
-  {
-    collapsed: false,
-    position: 'topright'
-  }
-).addTo(map);
+        const respuesta = await fetch(url.toString());
 
-// ==========================================
-// FUNCIONES DE SEGURIDAD HTML
-// ==========================================
+        if (!respuesta.ok) {
+            throw new Error(
+                'No fue posible consultar Google Sheets.'
+            );
+        }
 
-function esc(value) {
-  return String(value).replace(/[&<>"']/g, c => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;'
-  }[c]));
-}
+        const texto = await respuesta.text();
 
-function escId(value) {
-  return String(value).replace(/[^a-zA-Z0-9_-]/g, '_');
-}
+        // Respuesta Google Visualization:
+        // google.visualization.Query.setResponse({...});
 
-// ==========================================
-// GOOGLE SHEETS
-// ==========================================
+        const inicio = texto.indexOf('{');
+        const fin = texto.lastIndexOf('}');
 
-async function loadSheetCell(range, elementId) {
-  const el = document.getElementById(elementId);
-  if (!el) return;
+        if (inicio === -1 || fin === -1) {
+            throw new Error(
+                'Respuesta inválida de Google Sheets. Revisa el acceso.'
+            );
+        }
 
-  if (cellCache[range] !== undefined) {
-    el.innerHTML =
-      '<small>Google Sheets · pestaña APPCEL · ' +
-      esc(range) + '</small>' +
-      esc(cellCache[range] || '(La celda está vacía)');
-    return;
-  }
+        const resultado = JSON.parse(
+            texto.substring(inicio, fin + 1)
+        );
 
-  el.innerHTML =
-    '<small>Google Sheets · pestaña APPCEL · ' +
-    esc(range) + '</small>Consultando…';
+        if (resultado.status !== 'ok') {
+            throw new Error(
+                'Google Sheets devolvió un error.'
+            );
+        }
 
-  const url =
-    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(SHEET_NAME)}&range=${encodeURIComponent(range)}&tqx=out:json`;
+        const nuevosDatos = {};
 
-  try {
-    const response = await fetch(url);
+        const filas = resultado.table.rows || [];
 
-    if (!response.ok) {
-      throw new Error('Google respondió HTTP ' + response.status);
-    }
+        filas.forEach(fila => {
+            const celdas = fila.c || [];
 
-    const raw = await response.text();
+            // Leer valores de A, B, C, D
+            const id = celdas[0]?.v;
+            const nombre = celdas[1]?.f ??
+                           celdas[1]?.v ?? '';
 
-    const match = raw.match(
-      /google\.visualization\.Query\.setResponse\((.*)\);?\s*$/s
-    );
+            const localizacion = celdas[2]?.f ??
+                                 celdas[2]?.v ?? '';
 
-    if (!match) {
-      throw new Error(
-        'Google Sheets no devolvió datos legibles. Verifica los permisos de la hoja.'
-      );
+            const status = celdas[3]?.f ??
+                           celdas[3]?.v ?? '';
+
+            const clave = normalizarID(id);
+
+            if (!clave) {
+                return;
+            }
+
+            nuevosDatos[clave] = {
+                id: clave,
+                nombre: String(nombre ?? ''),
+                localizacion: String(localizacion ?? ''),
+                status: String(status ?? '')
+            };
+        });
+
+        datosContribuyentes = nuevosDatos;
+
+        console.log(
+            'Registros de contribuyentes:',
+            datosContribuyentes
+        );
+
+        return nuevosDatos;
     }
 
-    const data = JSON.parse(match[1]);
+    // =====================================================
+    // IDENTIFICAR EL POLÍGONO DEL KML
+    // =====================================================
 
-    if (data.status === 'error') {
-      throw new Error(
-        data.errors?.[0]?.detailed_message ||
-        'Error de consulta de Google Sheets.'
-      );
+    function obtenerIdPoligono(feature) {
+        const propiedades = feature.properties || {};
+
+        // Principalmente se usa el nombre del polígono
+        // del KML: 1, 2, 3, 4, 5...
+        const nombre =
+            propiedades.name ??
+            propiedades.Name ??
+            propiedades.id ??
+            '';
+
+        return normalizarID(nombre);
     }
 
-    const cell = data.table?.rows?.[0]?.c?.[0];
-    const value = cell?.v;
-    const formatted = cell?.f;
+    function obtenerInformacionPoligono(feature) {
+        const id = obtenerIdPoligono(feature);
 
-    const result = value == null
-      ? ''
-      : String(formatted ?? value);
-
-    cellCache[range] = result;
-
-    const current = document.getElementById(elementId);
-
-    if (current) {
-      current.innerHTML =
-        '<small>Google Sheets · pestaña APPCEL · ' +
-        esc(range) + '</small>' +
-        esc(result || '(La celda está vacía)');
+        return datosContribuyentes[id] || null;
     }
 
-  } catch (err) {
-    console.error(err);
+    // =====================================================
+    // DETERMINAR COLOR SEGÚN EL STATUS
+    // =====================================================
 
-    const current = document.getElementById(elementId);
+    function obtenerEstado(status) {
+        const valor = String(status || '')
+            .trim()
+            .toUpperCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
 
-    if (current) {
-      current.innerHTML =
-        '<small>Google Sheets · pestaña APPCEL · ' +
-        esc(range) + '</small>' +
-        'No se pudo leer la celda. Verifica que la hoja permita verla. ' +
-        'Detalle: ' + esc(err.message) +
-        '<br><button type="button" id="retry-sheet" style="margin-top:6px">Reintentar</button>';
+        // Comprobar primero NO PAGADO
+        if (
+            valor.includes('NO PAGADO') ||
+            valor.includes('NO-PAGADO') ||
+            valor.includes('PENDIENTE') ||
+            valor.includes('ADEUDO')
+        ) {
+            return 'no-pagado';
+        }
 
-      const retry = document.getElementById('retry-sheet');
+        if (
+            valor === 'PAGADO' ||
+            valor.includes('PAGADO')
+        ) {
+            return 'pagado';
+        }
 
-      if (retry) {
-        retry.onclick = () => {
-          delete cellCache[range];
-          loadSheetCell(range, elementId);
+        return 'desconocido';
+    }
+
+    function obtenerColor(feature) {
+        const datos = obtenerInformacionPoligono(feature);
+
+        if (!datos) {
+            return '#2563eb';
+        }
+
+        const estado = obtenerEstado(datos.status);
+
+        if (estado === 'pagado') {
+            return '#16a34a';
+        }
+
+        if (estado === 'no-pagado') {
+            return '#dc2626';
+        }
+
+        return '#2563eb';
+    }
+
+    function estiloPoligono(feature) {
+        const color = obtenerColor(feature);
+
+        return {
+            color: color,
+            weight: 2,
+            opacity: 1,
+            fillColor: color,
+            fillOpacity: 0.40
         };
-      }
-    }
-  }
-}
-
-// ==========================================
-// CARGA AUTOMÁTICA DEL ARCHIVO KML
-// ==========================================
-
-// IMPORTANTE:
-// index.html y estacionamientos.kml deben estar
-// en el mismo directorio publicado.
-//
-// GitHub Pages servirá el archivo relativo a esta página.
-const KML_URL = new URL(
-  'estacionamientos.kml',
-  window.location.href
-).href;
-
-let loadSequence = 0;
-
-async function loadKml() {
-  const currentLoad = ++loadSequence;
-
-  say('Cargando estacionamientos.kml…');
-
-  try {
-    const response = await fetch(KML_URL, {
-      cache: 'no-store'
-    });
-
-    if (!response.ok) {
-      throw new Error(
-        `No se pudo encontrar el KML. HTTP ${response.status}.`
-      );
     }
 
-    const text = await response.text();
+    // =====================================================
+    // CREAR POPUP
+    // =====================================================
 
-    // Detectar respuesta que no parece ser KML
-    if (
-      !text.trim() ||
-      !/<(?:\w+:)?kml[\s>]/i.test(text)
-    ) {
-      throw new Error(
-        'La respuesta no parece un archivo KML válido. Verifica la ruta y el nombre del archivo.'
-      );
+    function mostrarPopup(feature, layer) {
+        const id = obtenerIdPoligono(feature);
+        const datos = obtenerInformacionPoligono(feature);
+
+        let contenido = '';
+
+        if (datos) {
+            const estado = obtenerEstado(datos.status);
+
+            let claseStatus = 'status-desconocido';
+
+            if (estado === 'pagado') {
+                claseStatus = 'status-pagado';
+            } else if (estado === 'no-pagado') {
+                claseStatus = 'status-no-pagado';
+            }
+
+            contenido = `
+                <div class="info-popup">
+                    <h3>Estacionamiento ${escapeHTML(id)}</h3>
+
+                    <p>
+                        <b>ID:</b>
+                        ${escapeHTML(datos.id)}
+                    </p>
+
+                    <p>
+                        <b>Nombre:</b>
+                        ${escapeHTML(datos.nombre || 'Sin nombre')}
+                    </p>
+
+                    <p>
+                        <b>Localización:</b>
+                        ${escapeHTML(datos.localizacion || 'Sin localización')}
+                    </p>
+
+                    <p>
+                        <b>Status:</b>
+                        <span class="status ${claseStatus}">
+                            ${escapeHTML(datos.status || 'Sin status')}
+                        </span>
+                    </p>
+                </div>
+            `;
+        } else {
+            contenido = `
+                <div class="info-popup">
+                    <h3>Estacionamiento ${escapeHTML(id || 'Sin ID')}</h3>
+
+                    <p>
+                        No se encontró información para este ID
+                        en Google Sheets.
+                    </p>
+                </div>
+            `;
+        }
+
+        layer.bindPopup(contenido);
     }
 
-    const xml = new DOMParser().parseFromString(
-      text,
-      'application/xml'
-    );
+    // =====================================================
+    // CARGAR KML
+    // =====================================================
 
-    if (xml.querySelector('parsererror')) {
-      throw new Error(
-        'No se pudo interpretar el archivo como XML/KML.'
-      );
+    async function cargarKML() {
+        mostrarMensaje('Cargando estacionamientos...');
+
+        const respuesta = await fetch(KML_URL, {
+            cache: 'no-store'
+        });
+
+        if (!respuesta.ok) {
+            throw new Error(
+                'No se pudo cargar estacionamientos.kml. Revisa GitHub.'
+            );
+        }
+
+        const textoKML = await respuesta.text();
+
+        const parser = new DOMParser();
+
+        const documentoKML = parser.parseFromString(
+            textoKML,
+            'application/xml'
+        );
+
+        if (
+            documentoKML.querySelector('parsererror')
+        ) {
+            throw new Error('El archivo KML tiene un error de formato.');
+        }
+
+        if (
+            typeof toGeoJSON === 'undefined' ||
+            typeof toGeoJSON.kml !== 'function'
+        ) {
+            throw new Error(
+                'No se pudo cargar el conversor KML.'
+            );
+        }
+
+        const geoJSON = toGeoJSON.kml(documentoKML);
+
+        if (capaKML) {
+            map.removeLayer(capaKML);
+            capaKML = null;
+        }
+
+        capaKML = L.geoJSON(geoJSON, {
+            style: estiloPoligono,
+            onEachFeature: mostrarPopup
+        }).addTo(map);
+
+        const limites = capaKML.getBounds();
+
+        if (limites.isValid()) {
+            map.fitBounds(limites, {
+                padding: [25, 25],
+                maxZoom: 19
+            });
+        }
+
+        console.log('KML cargado:', geoJSON);
+
+        return geoJSON;
     }
 
-    const geo = toGeoJSON.kml(xml);
+    // =====================================================
+    // RECARGAR DATOS
+    // =====================================================
 
-    if (!geo.features || !geo.features.length) {
-      throw new Error(
-        'El KML no contiene elementos geográficos reconocibles.'
-      );
+    async function recargarDatos() {
+        const boton = document.getElementById('btnRecargar');
+
+        boton.disabled = true;
+
+        try {
+            await cargarDatosSheet();
+            await cargarKML();
+
+            mostrarMensaje(
+                'Mapa actualizado correctamente.'
+            );
+        } catch (error) {
+            console.error(error);
+
+            mostrarMensaje(
+                'Error: ' + error.message
+            );
+        } finally {
+            boton.disabled = false;
+        }
     }
 
-    // Evitar que una carga anterior reemplace una nueva
-    if (currentLoad !== loadSequence) return;
+    document.getElementById('btnRecargar').onclick =
+        recargarDatos;
 
-    kmlLayer.clearLayers();
-    kmlLayer.addData(geo);
+    // =====================================================
+    // MI UBICACIÓN
+    // =====================================================
 
-    if (!map.hasLayer(kmlLayer)) {
-      kmlLayer.addTo(map);
+    document.getElementById('btnUbicacion').onclick =
+        function() {
+
+        if (!navigator.geolocation) {
+            mostrarMensaje(
+                'Tu navegador no permite obtener la ubicación.'
+            );
+            return;
+        }
+
+        if (
+            !window.isSecureContext &&
+            location.hostname !== 'localhost'
+        ) {
+            mostrarMensaje(
+                'La ubicación requiere HTTPS.'
+            );
+            return;
+        }
+
+        mostrarMensaje('Obteniendo ubicación...');
+
+        navigator.geolocation.getCurrentPosition(
+            function(posicion) {
+                const lat = posicion.coords.latitude;
+                const lng = posicion.coords.longitude;
+                const precision = posicion.coords.accuracy;
+
+                if (marcadorUbicacion) {
+                    map.removeLayer(marcadorUbicacion);
+                }
+
+                if (circuloPrecision) {
+                    map.removeLayer(circuloPrecision);
+                }
+
+                marcadorUbicacion = L.marker([lat, lng])
+                    .addTo(map)
+                    .bindPopup('Mi ubicación');
+
+                circuloPrecision = L.circle([lat, lng], {
+                    radius: precision,
+                    color: '#145da0',
+                    fillOpacity: 0.10
+                }).addTo(map);
+
+                map.setView([lat, lng], 18);
+
+                marcadorUbicacion.openPopup();
+
+                mostrarMensaje(
+                    'Ubicación obtenida correctamente.'
+                );
+            },
+            function(error) {
+                let texto = 'No se pudo obtener la ubicación.';
+
+                if (error.code === 1) {
+                    texto = 'Permite el acceso a tu ubicación.';
+                } else if (error.code === 2) {
+                    texto = 'Ubicación no disponible.';
+                } else if (error.code === 3) {
+                    texto = 'Se agotó el tiempo de espera.';
+                }
+
+                mostrarMensaje(texto);
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 15000,
+                maximumAge: 0
+            }
+        );
+    };
+
+    // =====================================================
+    // INICIAR MAPA
+    // =====================================================
+
+    async function iniciarMapa() {
+        await recargarDatos();
     }
 
-    const bounds = kmlLayer.getBounds();
+    iniciarMapa();
 
-    if (bounds.isValid()) {
-      map.fitBounds(bounds, {
-        padding: [24, 24],
-        maxZoom: 19
-      });
-    }
-
-    say(
-      `KML cargado correctamente: ${geo.features.length} elemento(s).`,
-      'ok'
-    );
-
-  } catch (err) {
-    if (currentLoad !== loadSequence) return;
-
-    console.error('Error al cargar KML:', err);
-
-    say(
-      'No se pudo cargar estacionamientos.kml. ' +
-      'Verifica que el archivo esté junto al HTML, que el nombre coincida y que esté publicado. ' +
-      'Detalle: ' + err.message,
-      'error'
-    );
-  }
-}
-
-// Botón para volver a cargar los polígonos
-document.getElementById('reload')
-  .addEventListener('click', loadKml);
-
-// ==========================================
-// UBICACIÓN DEL DISPOSITIVO
-// ==========================================
-
-document.getElementById('locate')
-  .addEventListener('click', () => {
-
-  if (!('geolocation' in navigator)) {
-    say(
-      'Este navegador no ofrece geolocalización.',
-      'error'
-    );
-    return;
-  }
-
-  if (!window.isSecureContext) {
-    say(
-      'El GPS requiere abrir esta página desde HTTPS o localhost.',
-      'error'
-    );
-    return;
-  }
-
-  say('Solicitando permiso de ubicación…');
-
-  navigator.geolocation.getCurrentPosition(
-    pos => {
-      const lat = pos.coords.latitude;
-      const lon = pos.coords.longitude;
-      const accuracy = Math.round(pos.coords.accuracy);
-
-      map.setView([lat, lon], 18);
-
-      if (window.userMarker) {
-        map.removeLayer(window.userMarker);
-      }
-
-      if (window.userCircle) {
-        map.removeLayer(window.userCircle);
-      }
-
-      window.userMarker = L.marker([lat, lon])
-        .addTo(map)
-        .bindPopup(
-          `Tu ubicación<br>Precisión aproximada: ${accuracy} m`
-        )
-        .openPopup();
-
-      window.userCircle = L.circle([lat, lon], {
-        radius: accuracy,
-        color: '#4285f4',
-        fillColor: '#4285f4',
-        fillOpacity: .12,
-        weight: 1
-      }).addTo(map);
-
-      say(
-        `Ubicación obtenida. Precisión aproximada: ${accuracy} metros.`,
-        'ok'
-      );
-    },
-
-    err => {
-      const messages = {
-        1: 'Permiso denegado. Autoriza ubicación en los ajustes del navegador.',
-        2: 'No se pudo determinar la ubicación. Revisa GPS y conexión.',
-        3: 'La solicitud de ubicación agotó el tiempo de espera.'
-      };
-
-      say(
-        messages[err.code] ||
-        ('Error de ubicación: ' + err.message),
-        'error'
-      );
-    },
-
-    {
-      enableHighAccuracy: true,
-      timeout: 20000,
-      maximumAge: 5000
-    }
-  );
-});
-
-// ==========================================
-// INICIO AUTOMÁTICO
-// ==========================================
-
-loadKml();
-
-})();
 </script>
 
 </body>
