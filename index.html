@@ -306,7 +306,7 @@ L.control.layers(
         );
 
         url.searchParams.set('sheet', SHEET_NAME);
-        url.searchParams.set('range', 'A2:D');
+        url.searchParams.set('range', 'A2:G');
         url.searchParams.set('headers', '0');
         url.searchParams.set('tqx', 'out:json');
 
@@ -343,11 +343,15 @@ L.control.layers(
         (resultado.table.rows || []).forEach(function (fila) {
             const celdas = fila.c || [];
 
+
             // Columnas:
             // A = ID
             // B = Nombre
             // C = Localización
             // D = Status
+            // E = Metros x derecho
+            // F = Tipo de estacionamiento
+            // G = Estacionamiento
 
             const id = celdas[0]?.v;
 
@@ -360,6 +364,15 @@ L.control.layers(
             const status =
                 celdas[3]?.f ?? celdas[3]?.v ?? '';
 
+            const metrosDerecho =
+                celdas[4]?.f ?? celdas[4]?.v ?? '';
+
+            const tipoEstacionamiento =
+                celdas[5]?.f ?? celdas[5]?.v ?? '';
+
+            const estacionamiento =
+                celdas[6]?.f ?? celdas[6]?.v ?? '';
+
             const clave = normalizarID(id);
 
             if (!clave) {
@@ -370,8 +383,12 @@ L.control.layers(
                 id: clave,
                 nombre: String(nombre ?? ''),
                 localizacion: String(localizacion ?? ''),
-                status: String(status ?? '')
+                status: String(status ?? ''),
+                metrosDerecho: String(metrosDerecho ?? ''),
+                tipoEstacionamiento: String(tipoEstacionamiento ?? ''),
+                estacionamiento: String(estacionamiento ?? '')
             };
+
         });
 
         datosContribuyentes = registros;
