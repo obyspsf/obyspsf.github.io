@@ -464,65 +464,91 @@ L.control.layers(
     // CREAR CUADRO DE INFORMACIÓN
     // ==========================================
 
-    function crearPopup(info) {
 
-        if (!info) {
-            return `
-                <div class="popup-info">
-                    <h3>Sin información</h3>
-                    <div class="sin-info">
-                        No se encontró información
-                        para este estacionamiento
-                        en Google Sheets.
-                    </div>
-                </div>
-            `;
-        }
+function crearPopup(info) {
 
-        const nombre = escaparHTML(
-            info.nombre || 'Sin nombre'
-        );
-
-        const localizacion = escaparHTML(
-            info.localizacion || 'Sin localización'
-        );
-
-        const statusOriginal = String(
-            info.status || ''
-        ).trim();
-
-        const status = escaparHTML(
-            statusOriginal || 'SIN ESTATUS'
-        );
-
-        const claseStatus = obtenerClaseStatus(
-            statusOriginal
-        );
-
-        // Título: Nombre del contribuyente.
-        // No mostrar ID.
-        // No mostrar "Estacionamiento 1".
-
+    if (!info) {
         return `
             <div class="popup-info">
-
-                <h3>${nombre}</h3>
-
-                <p>
-                    <strong>Localización:</strong><br>
-                    ${localizacion}
-                </p>
-
-                <p>
-                    <strong>Status:</strong><br>
-                    <span class="status ${claseStatus}">
-                        ${status}
-                    </span>
-                </p>
-
+                <h3>Sin información</h3>
+                <div class="sin-info">
+                    No se encontró información
+                    para este estacionamiento
+                    en Google Sheets.
+                </div>
             </div>
         `;
     }
+
+    const nombre = escaparHTML(
+        info.nombre || 'Sin nombre'
+    );
+
+    const localizacion = escaparHTML(
+        info.localizacion || 'Sin localización'
+    );
+
+    const statusOriginal = String(
+        info.status || ''
+    ).trim();
+
+    const status = escaparHTML(
+        statusOriginal || 'SIN ESTATUS'
+    );
+
+    const claseStatus = obtenerClaseStatus(
+        statusOriginal
+    );
+
+    // Nuevos campos E, F y G
+    const metrosDerecho = escaparHTML(
+        info.metrosDerecho || 'Sin información'
+    );
+
+    const tipoEstacionamiento = escaparHTML(
+        info.tipoEstacionamiento || 'Sin información'
+    );
+
+    const estacionamiento = escaparHTML(
+        info.estacionamiento || 'Sin información'
+    );
+
+    return `
+        <div class="popup-info">
+
+            <h3>${nombre}</h3>
+
+            <p>
+                <strong>Localización:</strong><br>
+                ${localizacion}
+            </p>
+
+            <p>
+                <strong>Status:</strong><br>
+                <span class="status ${claseStatus}">
+                    ${status}
+                </span>
+            </p>
+
+            <p>
+                <strong>Metros x derecho:</strong><br>
+                ${metrosDerecho}
+            </p>
+
+            <p>
+                <strong>Tipo de estacionamiento:</strong><br>
+                ${tipoEstacionamiento}
+            </p>
+
+            <p>
+                <strong>Estacionamiento:</strong><br>
+                ${estacionamiento}
+            </p>
+
+        </div>
+    `;
+}
+
 
     // ==========================================
     // ESTILO DE LOS POLÍGONOS
