@@ -149,6 +149,33 @@
                 font-size: 12px;
             }
         }
+
+/* Pie de la ventana de información */
+.popup-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid #ddd;
+}
+
+/* Botón VISITAR */
+.btn-visitar {
+    display: inline-block;
+    background: #198754;
+    color: white !important;
+    text-decoration: none !important;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 7px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-visitar:hover {
+    background: #146c43;
+}        
     </style>
 </head>
 
@@ -464,6 +491,22 @@ L.control.layers(
     // CREAR CUADRO DE INFORMACIÓN
     // ==========================================
 
+function crearEnlaceVisitar(lat, lng) {
+
+    const destino = `${lat},${lng}`;
+
+    const url = new URL(
+        'https://www.google.com/maps/dir/'
+    );
+
+    url.searchParams.set('api', '1');
+    url.searchParams.set('origin', 'Current Location');
+    url.searchParams.set('destination', destino);
+    url.searchParams.set('travelmode', 'driving');
+
+    return url.toString();
+}
+
 
 function crearPopup(info) {
 
@@ -644,28 +687,50 @@ function crearPopup(info) {
         capaEstacionamientos = L.geoJSON(geojson, {
             style: estiloPoligono,
 
-            onEachFeature: function (feature, layer) {
 
-                const info = obtenerInformacionPoligono(feature);
+onEachFeature: function (feature, layer) {
 
-                // El cuadro muestra directamente el nombre.
-                layer.bindPopup(crearPopup(info));
+    const info = obtenerInformacionPoligono(feature);
 
-                // Resaltar al pasar el cursor
-                layer.on('mouseover', function () {
-                    if (layer.setStyle) {
-                        layer.setStyle({
-                            weight: 4
-                        });
-                    }
-                });
+    // Obtener coordenada de referencia del polígono.
+    // Se utiliza el centro de sus límites geográficos.
+    const centro = layer.getBounds().getCenter();
 
-                layer.on('mouseout', function () {
-                    if (capaEstacionamientos) {
-                        capaEstacionamientos.resetStyle(layer);
-                    }
-                });
-            }
+    const lat = centro.lat;
+    const lng = centro.lng;
+
+    // Crear ventana de información con botón VISITAR
+    const contenidoPopup = crearPopup(info) + `
+        <div class="popup-footer">
+            <a
+                class="btn-visitar"
+                href="${crearEnlaceVisitar(lat, lng)}"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                VISITAR
+            </a>
+        </div>
+    `;
+
+    layer.bindPopup(contenidoPopup);
+
+    // Resaltar al pasar el cursor
+    layer.on('mouseover', function () {
+        if (layer.setStyle) {
+            layer.setStyle({
+                weight: 4
+            });
+        }
+    });
+
+    layer.on('mouseout', function () {
+        if (capaEstacionamientos) {
+            capaEstacionamientos.resetStyle(layer);
+        }
+    });
+}
+
         }).addTo(map);
 
         // Ajustar mapa a los estacionamientos
